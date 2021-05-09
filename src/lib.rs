@@ -6,6 +6,8 @@ use x11::xlib::{
 
 pub type XmodmapPke = HashMap<u8, Vec<String>>;
 
+/// Return HashMap with KeyCode as key and vector of KeySyms as value
+/// (This block of code was taken from original `xmodmap` source code)
 pub unsafe fn xmodmap_pke(dpy: *mut Display) -> Result<XmodmapPke, String> {
     let mut xmodmap_pke_table: XmodmapPke = HashMap::new();
     let mut min_keycode = 0;
@@ -25,8 +27,7 @@ pub unsafe fn xmodmap_pke(dpy: *mut Display) -> Result<XmodmapPke, String> {
     }
     keymap = origkeymap;
     for i in min_keycode..=max_keycode {
-        let mut max;
-        max = keysyms_per_keycode - 1;
+        let mut max = keysyms_per_keycode - 1;
         while max >= 0 && *keymap.offset(max as isize) == 0_u64 {
             max -= 1
         }
