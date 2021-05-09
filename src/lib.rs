@@ -44,7 +44,7 @@ pub fn xmodmap_pke() -> Result<XmodmapPke, String> {
                 "NoSymbol"
             } else {
                 unsafe { CStr::from_ptr(XKeysymToString(ks)) }
-                .to_str()
+                    .to_str()
                     .unwrap()
             };
             if s.is_empty() {
