@@ -2,13 +2,15 @@ use std::collections::HashMap;
 use std::ffi::CStr;
 use x11::xlib::{
     Display, KeyCode, KeySym, XDisplayKeycodes, XFree, XGetKeyboardMapping, XKeysymToString,
+    XOpenDisplay, XCloseDisplay,
 };
 
 pub type XmodmapPke = HashMap<u8, Vec<String>>;
 
 /// Return HashMap with KeyCode as key and vector of KeySyms as value
 /// (This block of code was taken from original `xmodmap` source code)
-pub unsafe fn xmodmap_pke(dpy: *mut Display) -> Result<XmodmapPke, String> {
+pub unsafe fn xmodmap_pke() -> Result<XmodmapPke, String> {
+    let dpy: *mut Display = XOpenDisplay(std::ptr::null::<libc::c_char>());
     let mut xmodmap_pke_table: XmodmapPke = HashMap::new();
     let mut min_keycode = 0;
     let mut max_keycode = 0;
@@ -49,5 +51,6 @@ pub unsafe fn xmodmap_pke(dpy: *mut Display) -> Result<XmodmapPke, String> {
         xmodmap_pke_table.insert(i as u8, ksyms);
     }
     XFree(origkeymap as *mut libc::c_char as *mut libc::c_void);
+    XCloseDisplay(dpy);
     Ok(xmodmap_pke_table)
 }
