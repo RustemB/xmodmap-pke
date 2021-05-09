@@ -7,7 +7,7 @@ use x11::xlib::{
 
 pub type XmodmapPke = HashMap<u8, Vec<String>>;
 
-/// Return HashMap with KeyCode as key and vector of KeySyms as value
+/// Return `HashMap` with `KeyCode` as key and vector of `KeySyms` as value
 /// (This block of code was taken from original `xmodmap` source code)
 pub fn xmodmap_pke() -> Result<XmodmapPke, String> {
     let dpy: *mut Display = unsafe { XOpenDisplay(std::ptr::null::<libc::c_char>()) };
@@ -40,24 +40,24 @@ pub fn xmodmap_pke() -> Result<XmodmapPke, String> {
         let mut ksyms: Vec<String> = Vec::new();
         for j in 0..=max {
             let ks: KeySym = unsafe { *keymap.offset(j as isize) };
-            let s = if ks != 0_u64 {
-                unsafe { CStr::from_ptr(XKeysymToString(ks)) }
-                    .to_str()
-                    .unwrap()
-            } else {
+            let s = if ks == 0_u64 {
                 "NoSymbol"
-            };
-            if !s.is_empty() {
-                ksyms.push(s.to_string());
             } else {
+                unsafe { CStr::from_ptr(XKeysymToString(ks)) }
+                .to_str()
+                    .unwrap()
+            };
+            if s.is_empty() {
                 ksyms.push(format!("{:0>4x}", ks));
+            } else {
+                ksyms.push(s.to_string());
             }
         }
         keymap = unsafe { keymap.offset(keysyms_per_keycode as isize) };
         xmodmap_pke_table.insert(i as u8, ksyms);
     }
     unsafe {
-        XFree(origkeymap as *mut libc::c_char as *mut libc::c_void);
+        XFree(origkeymap.cast::<i8>().cast::<libc::c_void>());
         XCloseDisplay(dpy);
     }
     Ok(xmodmap_pke_table)
