@@ -1,6 +1,11 @@
 [package]
 name = "xmodmap-pke"
 authors = ["Rustem B. <rustemb@systemli.org>"]
+description = "xmodmap -pke in mostly pure rust"
+homepage = "https://github.com/RustemB/xmodmap-pke"
+repository = "https://github.com/RustemB/xmodmap-pke" 
+readme = "Readme.md"
+documentation = "https://docs.rs/xmodmap-pke"
 license = "LGPL-3.0-or-later"
 version = "0.1.0"
 edition = "2018"
