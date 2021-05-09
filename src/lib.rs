@@ -27,13 +27,13 @@ pub unsafe fn xmodmap_pke(dpy: *mut Display) -> Result<XmodmapPke, String> {
     for i in min_keycode..=max_keycode {
         let mut max;
         max = keysyms_per_keycode - 1;
-        while max >= 0 && *keymap.offset(max as isize) == 0_i64 as libc::c_ulong {
+        while max >= 0 && *keymap.offset(max as isize) == 0_u64 {
             max -= 1
         }
         let mut ksyms: Vec<String> = Vec::new();
         for j in 0..=max {
             let ks: KeySym = *keymap.offset(j as isize);
-            let s = if ks != 0_i64 as libc::c_ulong {
+            let s = if ks != 0_u64 {
                 CStr::from_ptr(XKeysymToString(ks)).to_str().unwrap()
             } else {
                 "NoSymbol"
